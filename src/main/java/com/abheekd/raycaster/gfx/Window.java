@@ -1,5 +1,6 @@
 package com.abheekd.raycaster.gfx;
 
+import com.abheekd.raycaster.objects.Map;
 import com.abheekd.raycaster.objects.RaySource;
 
 import javax.swing.JFrame;
@@ -12,9 +13,11 @@ import java.awt.geom.Point2D;
 public class Window extends JFrame {
     private static class Panel extends JPanel implements KeyListener {
         private final RaySource raySource;
+        private final Map map;
         private boolean[] keys; // todo: convert to set
 
         public Panel() {
+            this.map = new Map();
             this.raySource = new RaySource();
             this.keys = new boolean[4];
             this.addKeyListener(this);
@@ -23,8 +26,10 @@ public class Window extends JFrame {
 
         @Override
         public void paintComponent(Graphics g) {
-            raySource.move(keys);
+            raySource.move(keys, (double)super.getWidth() / 10000, (double)super.getHeight() / 10000);
             super.paintComponent(g);
+            map.draw(g, super.getWidth(), super.getHeight());
+            raySource.calculateDistances();
             raySource.draw(g);
 
             repaint();
