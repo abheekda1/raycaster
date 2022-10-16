@@ -58,7 +58,21 @@ public class RaySource {
             r.setMagnitude(10000);
             if (this.direction > Math.PI) {
                 double rayY = (int)(position.getY() / 100) * 100;
-                r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
+                double rayX = (position.getX() + Math.cos(direction + r.getAngle()) * (Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()))));
+                while (dof < 4) {
+                    if (rayY == 0) break;
+                    if (rayY >= 500) break;
+                    if (rayX / 100 > 5 || rayX / 100 < 0) break;
+                    int mapBlock = map.getGrid()[(int)rayY / 100 - 1][(int) rayX / 100];
+                    if (mapBlock == 1) {
+                        r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
+                        break;
+                    } else {
+                        rayY -= 100;
+                        rayX -= 100 / Math.tan(direction + r.getAngle());
+                        dof++;
+                    }
+                }
             } else if (this.direction < Math.PI) {
                 double rayY = (int)(position.getY() / 100) * 100 + 100;
                 double rayX = (position.getX() + Math.cos(direction + r.getAngle()) * (Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()))));
