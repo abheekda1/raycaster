@@ -1,17 +1,14 @@
 package com.abheekd.raycaster;
 
 import com.abheekd.raycaster.gfx.RenderWindow;
-import com.abheekd.raycaster.gfx.Window;
+import com.abheekd.raycaster.gfx.TDVisualizerWindow;
 
-/**
- * Hello world!
- *
- */
 public class App {
   public static void main(String[] args) {
     // System.out.println( "Hello World!" );
-    Window window = new Window();
+    TDVisualizerWindow window = new TDVisualizerWindow();
     RenderWindow renderWindow =
-        new RenderWindow(window.getPanel().getRaySource());
+        new RenderWindow(window);
+    // RenderWindow rWin = new RenderWindow();
   }
 }

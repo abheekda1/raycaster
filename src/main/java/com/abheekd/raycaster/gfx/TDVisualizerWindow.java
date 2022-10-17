@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class Window extends JFrame {
+public class TDVisualizerWindow extends JFrame {
   public static class Panel extends JPanel implements KeyListener {
     private final RaySource raySource;
     private final Map map;
@@ -79,7 +79,7 @@ public class Window extends JFrame {
 
   private final Panel panel;
 
-  public Window() {
+  public TDVisualizerWindow() {
     this.panel = new Panel();
 
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
