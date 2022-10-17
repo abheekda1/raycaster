@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Vector;
 
 public class RaySource {
@@ -19,7 +22,7 @@ public class RaySource {
         this.direction = 0.0;
 
         this.rays = new Vector<>();
-        for (double i = -(double)numRays / 2; i < (double)numRays / 2; i++) {
+        for (double i = -(double) numRays / 2; i < (double) numRays / 2; i++) {
             this.rays.add(new Ray(i * Math.PI / 180, 20.0));
         }
         this.map = new Map();
@@ -51,105 +54,139 @@ public class RaySource {
     }
 
     public void calculateDistances() {
-        for (int i = 0; i < rays.size(); i++) {
-            int dof = 0;
-            Ray r = rays.get(i);
-            // System.out.print("\n(" + i + ")\n-----------------------------\n");
-            // r.setMagnitude(10000);
+        try {
+            FileWriter logFile = new FileWriter("log.txt", false);
+            for (int i = 0; i < rays.size(); i++) {
+                int dof = 0;
+                Ray r = rays.get(i);
 
-            double xMag = 10000;
-            double yMag = 10000;
-            if (this.direction > Math.PI) {
-                double rayY = (int)(position.getY() / 100) * 100;
-                double rayX = (position.getX() + Math.cos(direction + r.getAngle()) * (Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()))));
-                while (dof < 4) {
-                    if (rayY == 0) break;
-                    if (rayY >= 500) break;
-                    if (rayX / 100 >= 5 || rayX / 100 < 0) break;
-                    int mapBlock = map.getGrid()[(int)rayY / 100 - 1][(int) rayX / 100];
-                    if (mapBlock == 1) {
-                        // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
-                        yMag = Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()));
-                        break;
-                    } else {
-                        rayY -= 100;
-                        rayX -= 100 / Math.tan(direction + r.getAngle());
-                        dof++;
+                double rAbsoluteAngle = this.direction + r.getAngle();
+                if (rAbsoluteAngle < 0) rAbsoluteAngle = 2 * Math.PI + rAbsoluteAngle;
+                rAbsoluteAngle = rAbsoluteAngle % (2 * Math.PI);
+                // System.out.print("\n(" + i + ")\n-----------------------------\n");
+                // r.setMagnitude(10000);
+
+                double xMag = 10000;
+                double yMag = 10000;
+
+                logFile.write("\n(" + i + ")\n-----------------------------\n");
+                logFile.write("Angle: " + rAbsoluteAngle / Math.PI + " pi\n");
+                if (rAbsoluteAngle > Math.PI) {
+                    double rayY = (int) (position.getY() / 100) * 100;
+                    double rayX = (position.getX() + Math.cos(direction + r.getAngle())
+                            * (Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()))));
+                    while (dof < 4) {
+                        logFile.write("(Y) up\n");
+                        logFile.write("DOF: " + dof + '\n');
+                        logFile.write("X: " + rayX + '\n');
+                        logFile.write("Y: " + rayY + '\n');
+                        logFile.write('\n');
+                        if (rayX / 100 >= 5 || rayX / 100 < 0)
+                            break;
+                        if (rayY / 100 >= 5 || rayY / 100 <= 0)
+                            break;
+                        int mapBlock = map.getGrid()[(int) rayY / 100 - 1][(int) rayX / 100];
+                        if (mapBlock == 1) {
+                            yMag = Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()));
+                            logFile.write("Hit! Magnitude: " + yMag + '\n');
+                            break;
+                        } else {
+                            rayY -= 100;
+                            rayX -= 100 / Math.tan(direction + r.getAngle());
+                            dof++;
+                        }
+                    }
+                } else if (rAbsoluteAngle < Math.PI) {
+                    double rayY = (int) (position.getY() / 100) * 100 + 100;
+                    double rayX = (position.getX() + Math.cos(direction + r.getAngle())
+                            * ((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
+                    while (dof < 4) {
+                        logFile.write("(X) right\n");
+                        logFile.write("DOF: " + dof + '\n');
+                        logFile.write("X: " + rayX + '\n');
+                        logFile.write("Y: " + rayY + '\n');
+                        logFile.write('\n');
+                        if (rayX / 100 >= 5 || rayX / 100 < 0)
+                            break;
+                        if (rayY / 100 >= 5 || rayY / 100 < 0)
+                            break;
+                        int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100];
+                        if (mapBlock == 1) {
+                            yMag = Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()));
+                            logFile.write("Hit! Magnitude: " + yMag + '\n');
+                            break;
+                        } else {
+                            rayY += 100;
+                            rayX += 100 / Math.tan(direction + r.getAngle());
+                            dof++;
+                        }
                     }
                 }
-            } else if (this.direction < Math.PI) {
-                double rayY = (int)(position.getY() / 100) * 100 + 100;
-                double rayX = (position.getX() + Math.cos(direction + r.getAngle()) * (Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()))));
-                while (dof < 4) {
-                    if (rayY == 0) break;
-                    if (rayY >= 500) break;
-                    //System.out.println("DOF: " + dof);
-                    //System.out.println("X: " + rayX);
-                    //System.out.println("Y: " + rayY);
-                    //System.out.println();
-                    if (rayX / 100 >= 5 || rayX / 100 < 0) break;
-                    int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100];
-                    if (mapBlock == 1) {
-                        // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
-                        yMag = Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle()));
-                        //System.out.println("Hit!");
-                        break;
-                    } else {
-                        rayY += 100;
-                        rayX += 100 / Math.tan(direction + r.getAngle());
-                        dof++;
+
+                dof = 0;
+                if (rAbsoluteAngle < (Math.PI / 2) || rAbsoluteAngle > (3 * Math.PI / 2)) {
+                    double rayX = (int) (position.getX() / 100) * 100 + 100;
+                    double rayY = (position.getY() + Math.sin(direction + r.getAngle())
+                            * ((rayX - position.getX()) / Math.cos(direction + r.getAngle())));
+                    while (dof < 4) {
+                        logFile.write("(X) right\n");
+                        logFile.write("DOF: " + dof + '\n');
+                        logFile.write("X: " + rayX + '\n');
+                        logFile.write("Y: " + rayY + '\n');
+                        logFile.write('\n');
+                        if (rayX / 100 >= 5 || rayX / 100 < 0)
+                            break;
+                        if (rayY / 100 >= 5 || rayY / 100 < 0)
+                            break;
+                        int mapBlock = map.getGrid()[(int) rayY / 100][(int) rayX / 100];
+                        if (mapBlock == 1) {
+                            xMag = Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()));
+                            logFile.write("Hit! Magnitude: " + xMag + '\n');
+                            break;
+                        } else {
+                            rayX += 100;
+                            rayY += 100 * Math.tan(direction + r.getAngle());
+                            dof++;
+                        }
+                    }
+                } else if (rAbsoluteAngle > (Math.PI / 2) && rAbsoluteAngle < (3 * Math.PI / 2)) {
+                    double rayX = (int) (position.getX() / 100) * 100;
+                    double rayY = (position.getY() + Math.sin(direction + r.getAngle())
+                            * ((rayX - position.getX()) / Math.cos(direction + r.getAngle())));
+                    while (dof < 4) {
+                        logFile.write("(X) left\n");
+                        logFile.write("DOF: " + dof + '\n');
+                        logFile.write("X: " + rayX + '\n');
+                        logFile.write("Y: " + rayY + '\n');
+                        logFile.write('\n');
+                        if (rayX / 100 >= 5 || rayX / 100 <= 0)
+                            break;
+                        if (rayY / 100 >= 5 || rayY / 100 < 0)
+                            break;
+                        int mapBlock = map.getGrid()[(int) rayY / 100][(int) rayX / 100 - 1];
+                        if (mapBlock == 1) {
+                            xMag = Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()));
+                            logFile.write("Hit! Magnitude: " + xMag + '\n');
+                            break;
+                        } else {
+                            rayX -= 100;
+                            rayY -= 100 * Math.tan(direction + r.getAngle());
+                            dof++;
+                        }
                     }
                 }
+
+                double finalMagnitude = Math.min(xMag, yMag);
+                r.setMagnitude(finalMagnitude);
+                if (finalMagnitude == xMag)
+                    r.setHitX(true);
+                else
+                    r.setHitX(false);
+                logFile.write("-----------------------------\n");
             }
-
-            dof = 0;
-            if (this.direction < Math.PI / 2 || this.direction > 3 * Math.PI / 2) {
-                double rayX = (int)(position.getX() / 100) * 100 + 100;
-                double rayY = (position.getY() + Math.sin(direction + r.getAngle()) * (Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()))));
-                while (dof < 4) {
-                    if (rayX == 0) break;
-                    if (rayX >= 500) break;
-                    if (rayY / 100 >= 5 || rayY / 100 < 0) break;
-                    int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100];
-                    if (mapBlock == 1) {
-                        // r.setMagnitude(Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle())));
-                        xMag = Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()));
-                        break;
-                    } else {
-                        rayX += 100;
-                        rayY += 100 * Math.tan(direction + r.getAngle());
-                        dof++;
-                    }
-                }
-            } else if (this.direction > Math.PI / 2 && this.direction < 3 * Math.PI / 2) {
-                double rayX = (int)(position.getX() / 100) * 100;
-                double rayY = (position.getY() + Math.sin(direction + r.getAngle()) * (Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()))));
-                while (dof < 4) {
-                    // System.out.println("DOF: " + dof);
-                    // System.out.println("X: " + rayX);
-                    // System.out.println("Y: " + rayY);
-                    // System.out.println();
-                    if (rayX == 0) break;
-                    if (rayX >= 500) break;
-                    if (rayY / 100 >= 5 || rayY / 100 < 0) break;
-                    int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100 - 1];
-                    if (mapBlock == 1) {
-                        // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
-                        xMag = Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()));
-                        break;
-                    } else {
-                        rayX -= 100;
-                        rayY -= 100 * Math.tan(direction + r.getAngle());
-                        dof++;
-                    }
-                }
-            }
-
-            double finalMagnitude = Math.min(xMag, yMag);
-            r.setMagnitude(finalMagnitude);
-            if (finalMagnitude == xMag) r.setHitX(true);
-            else r.setHitX(false);
-            // System.out.print("-----------------------------\n");
+            logFile.close();
+        } catch (IOException e) {
+            System.out.println(e);
         }
     }
 
@@ -192,13 +229,15 @@ public class RaySource {
 
     public void draw(@NotNull Graphics g) {
         g.setColor(Color.RED);
-        g.drawRect((int)position.getX() - drawSize / 2, (int)position.getY() - drawSize / 2, drawSize, drawSize);
+        g.drawRect((int) position.getX() - drawSize / 2, (int) position.getY() - drawSize / 2, drawSize, drawSize);
         g.setColor(Color.PINK);
-        g.fillRect((int)position.getX() - drawSize / 2, (int)position.getY() - drawSize / 2, drawSize, drawSize);
+        g.fillRect((int) position.getX() - drawSize / 2, (int) position.getY() - drawSize / 2, drawSize, drawSize);
 
         /*
-        g.setColor(Color.GREEN);
-        g.drawLine((int)position.getX(), (int)position.getY(), (int)(position.getX() + (Math.cos(direction) * drawSize)), (int)(position.getY() + (Math.sin(direction) * drawSize)));
+         * g.setColor(Color.GREEN);
+         * g.drawLine((int)position.getX(), (int)position.getY(), (int)(position.getX()
+         * + (Math.cos(direction) * drawSize)), (int)(position.getY() +
+         * (Math.sin(direction) * drawSize)));
          */
         for (Ray ray : rays) {
             ray.draw(g, this.position, this.direction);
@@ -210,9 +249,10 @@ public class RaySource {
         for (int i = 0; i < rays.size(); i++) {
             g.setColor(Color.GRAY);
             Ray r = rays.get(i);
-            if (r.getMagnitude() == 10000) continue;
+            if (r.getMagnitude() == 10000)
+                continue;
             int xPos = i * lineWidth;
-            int lineHeight = (int)((double)drawHeight / r.getMagnitude());
+            int lineHeight = (int) ((double) drawHeight / (r.getMagnitude() * Math.cos(r.getAngle())));
             final int yCenter = 500 / 2;
             int yPos = yCenter - lineHeight / 2;
             if (r.getHitX()) {
