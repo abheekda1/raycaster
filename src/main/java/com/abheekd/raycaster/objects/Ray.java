@@ -31,25 +31,15 @@ public class Ray {
   // end constructors
 
   // accessors
-  public Point2D getStart() {
-    return start;
-  }
+  public Point2D getStart() { return start; }
 
-  public Point2D getEnd() {
-    return end;
-  }
+  public Point2D getEnd() { return end; }
 
-  public double getMagnitude() {
-    return this.magnitude;
-  }
+  public double getMagnitude() { return this.magnitude; }
 
-  public double getAngle() {
-    return this.angle;
-  }
+  public double getAngle() { return this.angle; }
 
-  public boolean getHitX() {
-    return this.hitX;
-  }
+  public boolean getHitX() { return this.hitX; }
   // end accessors
 
   // mutators
@@ -75,9 +65,7 @@ public class Ray {
     setPointsWithAngleAndMagnitude();
   }
 
-  public void setHitX(boolean hitX) {
-    this.hitX = hitX;
-  }
+  public void setHitX(boolean hitX) { this.hitX = hitX; }
   // end mutators
 
   // member functions
@@ -91,19 +79,18 @@ public class Ray {
 
   public void setPointsWithAngleAndMagnitude() {
     this.start = new Point2D.Double(0, 0);
-    this.end = new Point2D.Double(Math.cos(angle) * magnitude, Math.sin(angle) * magnitude);
+    this.end = new Point2D.Double(Math.cos(angle) * magnitude,
+                                  Math.sin(angle) * magnitude);
   }
   // end member functions
 
   // JFrame functions
   public void draw(Graphics g, Point2D origin, double direction) {
     g.setColor(Color.BLUE);
-    g.drawLine(
-            (int)(origin.getX() + start.getX()),
-            (int)(origin.getY() + start.getY()),
-            (int)(origin.getX() + Math.cos(direction + angle) * magnitude),
-            (int)(origin.getY() + Math.sin(direction + angle) * magnitude)
-    );
+    g.drawLine((int)(origin.getX() + start.getX()),
+               (int)(origin.getY() + start.getY()),
+               (int)(origin.getX() + Math.cos(direction + angle) * magnitude),
+               (int)(origin.getY() + Math.sin(direction + angle) * magnitude));
   }
   // end JFrame functions
 }
