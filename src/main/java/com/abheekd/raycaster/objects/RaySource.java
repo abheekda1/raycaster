@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.Vector;
 
 public class RaySource {
-    private final int numRays = 30;
+    private final int numRays = 2;
     private final Vector<Ray> rays;
     private Point2D position;
     private double direction;
@@ -15,7 +15,7 @@ public class RaySource {
     private Map map;
 
     public RaySource() {
-        this.position = new Point2D.Double(0, 0);
+        this.position = new Point2D.Double(250, 50);
         this.direction = 0.0;
 
         this.rays = new Vector<>();
@@ -65,7 +65,7 @@ public class RaySource {
                 while (dof < 4) {
                     if (rayY == 0) break;
                     if (rayY >= 500) break;
-                    if (rayX / 100 > 5 || rayX / 100 < 0) break;
+                    if (rayX / 100 >= 5 || rayX / 100 < 0) break;
                     int mapBlock = map.getGrid()[(int)rayY / 100 - 1][(int) rayX / 100];
                     if (mapBlock == 1) {
                         // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
@@ -87,7 +87,7 @@ public class RaySource {
                     //System.out.println("X: " + rayX);
                     //System.out.println("Y: " + rayY);
                     //System.out.println();
-                    if (rayX / 100 > 5 || rayX / 100 < 0) break;
+                    if (rayX / 100 >= 5 || rayX / 100 < 0) break;
                     int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100];
                     if (mapBlock == 1) {
                         // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
@@ -102,13 +102,14 @@ public class RaySource {
                 }
             }
 
+            dof = 0;
             if (this.direction < Math.PI / 2 || this.direction > 3 * Math.PI / 2) {
                 double rayX = (int)(position.getX() / 100) * 100 + 100;
                 double rayY = (position.getY() + Math.sin(direction + r.getAngle()) * (Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()))));
                 while (dof < 4) {
                     if (rayX == 0) break;
                     if (rayX >= 500) break;
-                    if (rayY / 100 > 5 || rayY / 100 < 0) break;
+                    if (rayY / 100 >= 5 || rayY / 100 < 0) break;
                     int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100];
                     if (mapBlock == 1) {
                         // r.setMagnitude(Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle())));
@@ -117,6 +118,28 @@ public class RaySource {
                     } else {
                         rayX += 100;
                         rayY += 100 * Math.tan(direction + r.getAngle());
+                        dof++;
+                    }
+                }
+            } else if (this.direction > Math.PI / 2 && this.direction < 3 * Math.PI / 2) {
+                double rayX = (int)(position.getX() / 100) * 100;
+                double rayY = (position.getY() + Math.sin(direction + r.getAngle()) * (Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()))));
+                while (dof < 4) {
+                    // System.out.println("DOF: " + dof);
+                    // System.out.println("X: " + rayX);
+                    // System.out.println("Y: " + rayY);
+                    // System.out.println();
+                    if (rayX == 0) break;
+                    if (rayX >= 500) break;
+                    if (rayY / 100 >= 5 || rayY / 100 < 0) break;
+                    int mapBlock = map.getGrid()[(int)rayY / 100][(int)rayX / 100 - 1];
+                    if (mapBlock == 1) {
+                        // r.setMagnitude(Math.abs((rayY - position.getY()) / Math.sin(direction + r.getAngle())));
+                        xMag = Math.abs((rayX - position.getX()) / Math.cos(direction + r.getAngle()));
+                        break;
+                    } else {
+                        rayX -= 100;
+                        rayY -= 100 * Math.tan(direction + r.getAngle());
                         dof++;
                     }
                 }
