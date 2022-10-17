@@ -11,7 +11,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
 
 public class Window extends JFrame {
-    private static class Panel extends JPanel implements KeyListener {
+    public static class Panel extends JPanel implements KeyListener {
         private final RaySource raySource;
         private final Map map;
         private boolean[] keys; // todo: convert to set
@@ -67,6 +67,10 @@ public class Window extends JFrame {
             if (e.getKeyCode() == KeyEvent.VK_A) keys[2] = false;
             if (e.getKeyCode() == KeyEvent.VK_D) keys[3] = false;
         }
+
+        public RaySource getRaySource() {
+            return this.raySource;
+        }
     }
 
     private final Panel panel;
@@ -84,5 +88,9 @@ public class Window extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setResizable(false);
+    }
+
+    public Panel getPanel() {
+        return this.panel;
     }
 }

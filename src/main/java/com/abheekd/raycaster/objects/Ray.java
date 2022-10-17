@@ -8,6 +8,7 @@ public class Ray {
   private Point2D end;
   private double angle;
   private double magnitude;
+  private boolean hitX;
 
   // constructors
   public Ray() {
@@ -45,6 +46,10 @@ public class Ray {
   public double getAngle() {
     return this.angle;
   }
+
+  public boolean getHitX() {
+    return this.hitX;
+  }
   // end accessors
 
   // mutators
@@ -68,6 +73,10 @@ public class Ray {
   public void setAngle(double angle) {
     this.angle = angle;
     setPointsWithAngleAndMagnitude();
+  }
+
+  public void setHitX(boolean hitX) {
+    this.hitX = hitX;
   }
   // end mutators
 

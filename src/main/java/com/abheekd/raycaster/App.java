@@ -1,5 +1,6 @@
 package com.abheekd.raycaster;
 
+import com.abheekd.raycaster.gfx.RenderWindow;
 import com.abheekd.raycaster.gfx.Window;
 
 /**
@@ -12,5 +13,6 @@ public class App
     {
         // System.out.println( "Hello World!" );
         Window window = new Window();
+        RenderWindow renderWindow = new RenderWindow(window.getPanel().getRaySource());
     }
 }

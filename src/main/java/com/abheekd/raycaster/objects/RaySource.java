@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.Vector;
 
 public class RaySource {
-    private final int numRays = 2;
+    private final int numRays = 80;
     private final Vector<Ray> rays;
     private Point2D position;
     private double direction;
@@ -145,7 +145,10 @@ public class RaySource {
                 }
             }
 
-            r.setMagnitude(Math.min(xMag, yMag));
+            double finalMagnitude = Math.min(xMag, yMag);
+            r.setMagnitude(finalMagnitude);
+            if (finalMagnitude == xMag) r.setHitX(true);
+            else r.setHitX(false);
             // System.out.print("-----------------------------\n");
         }
     }
@@ -199,6 +202,23 @@ public class RaySource {
          */
         for (Ray ray : rays) {
             ray.draw(g, this.position, this.direction);
+        }
+    }
+
+    public void renderDraw(@NotNull Graphics g, int w, int h, int drawHeight) {
+        int lineWidth = w / rays.size();
+        for (int i = 0; i < rays.size(); i++) {
+            g.setColor(Color.GRAY);
+            Ray r = rays.get(i);
+            if (r.getMagnitude() == 10000) continue;
+            int xPos = i * lineWidth;
+            int lineHeight = (int)((double)drawHeight / r.getMagnitude());
+            final int yCenter = 500 / 2;
+            int yPos = yCenter - lineHeight / 2;
+            if (r.getHitX()) {
+                g.setColor(Color.DARK_GRAY);
+            }
+            g.fillRect(xPos, yPos, lineWidth, lineHeight);
         }
     }
 }
