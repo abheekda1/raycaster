@@ -74,7 +74,7 @@ public class RenderWindow extends JFrame {
     this.panel = new Panel(r);
 
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    this.setUndecorated(true);
+    // this.setUndecorated(true);
 
     this.add(panel);
     this.pack();

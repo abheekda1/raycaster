@@ -253,20 +253,27 @@ public class RaySource {
 
   public void renderDraw(@NotNull Graphics g, int w, int h, int drawHeight) {
     int lineWidth = w / rays.size();
-    for (int i = 0; i < rays.size(); i++) {
-      g.setColor(Color.GRAY);
-      Ray r = rays.get(i);
-      if (r.getMagnitude() == 10000)
-        continue;
-      int xPos = i * lineWidth;
-      int lineHeight = (int)((double)drawHeight /
-                             (r.getMagnitude() * Math.cos(r.getAngle())));
-      final int yCenter = 500 / 2;
-      int yPos = yCenter - lineHeight / 2;
-      if (r.getHitX()) {
-        g.setColor(Color.DARK_GRAY);
-      }
-      g.fillRect(xPos, yPos, lineWidth, lineHeight);
+    drawRay(g, w, h, lineWidth, drawHeight, 0, rays.size() - 1);
+  }
+
+  private void drawRay(@NotNull Graphics g, int w, int h, int lineWidth, int drawHeight, int x, int maxX) {
+    if (x > maxX) return;
+    g.setColor(Color.GRAY);
+    Ray r = rays.get(x);
+    if (r.getMagnitude() == 10000) {
+      drawRay(g, w, h, lineWidth, drawHeight, x + 1, maxX);
+      return;
     }
+    int xPos = x * lineWidth;
+    int lineHeight = (int)((double)drawHeight /
+            (r.getMagnitude() * Math.cos(r.getAngle())));
+    final int yCenter = 500 / 2;
+    int yPos = yCenter - lineHeight / 2;
+    if (r.getHitX()) {
+      g.setColor(Color.DARK_GRAY);
+    }
+    g.fillRect(xPos, yPos, lineWidth, lineHeight);
+
+    drawRay(g, w, h, lineWidth, drawHeight, x + 1, maxX);
   }
 }
