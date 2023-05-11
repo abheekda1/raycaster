@@ -8,13 +8,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class RenderWindow extends JFrame {
-  private class Panel extends JPanel implements KeyListener {
-    private final RaySource raySource;
-    private boolean[] keys; // todo: convert to set
-
+  private class Panel extends com.abheekd.raycaster.gfx.Panel implements KeyListener {
     public Panel(RaySource r) {
-      this.raySource = r;
-      this.keys = new boolean[4];
+      super(r);
       this.setFocusable(true);
       if (!RenderWindow.this.getFromTwoD()) {
         this.addKeyListener(this);

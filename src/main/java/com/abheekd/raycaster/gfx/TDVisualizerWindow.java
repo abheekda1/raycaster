@@ -9,15 +9,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class TDVisualizerWindow extends JFrame {
-  public static class Panel extends JPanel implements KeyListener {
-    private final RaySource raySource;
+  public static class Panel extends com.abheekd.raycaster.gfx.Panel implements KeyListener {
     private final Map map;
-    private boolean[] keys; // todo: convert to set
 
-    public Panel() {
+    public Panel(RaySource r) {
+      super(r);
       this.map = new Map();
-      this.raySource = new RaySource();
-      this.keys = new boolean[4];
       this.addKeyListener(this);
       this.setFocusable(true);
     }
@@ -80,7 +77,7 @@ public class TDVisualizerWindow extends JFrame {
   private final Panel panel;
 
   public TDVisualizerWindow() {
-    this.panel = new Panel();
+    this.panel = new Panel(new RaySource());
 
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setUndecorated(true);
