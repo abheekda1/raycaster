@@ -21,13 +21,17 @@ public class TDVisualizerWindow extends JFrame {
 
     @Override
     public void paintComponent(Graphics g) {
+      // move raySource based on current keys pressed
       raySource.move(keys, (double)super.getWidth() / 10000,
                      (double)super.getHeight() / 10000);
       super.paintComponent(g);
+      // draw the map
       map.draw(g, super.getWidth(), super.getHeight());
+      // calculate ray lengths
       raySource.calculateDistances();
       raySource.draw(g);
 
+      // repaint to draw every frame
       repaint();
 
       // System.out.println("Painting!");
@@ -47,6 +51,7 @@ public class TDVisualizerWindow extends JFrame {
     @Override
     public void keyTyped(KeyEvent e) {}
 
+    // keypress listener
     @Override
     public void keyPressed(KeyEvent e) {
       if (e.getKeyCode() == KeyEvent.VK_W)
@@ -59,6 +64,7 @@ public class TDVisualizerWindow extends JFrame {
         keys[3] = true;
     }
 
+    // key release listener
     @Override
     public void keyReleased(KeyEvent e) {
       if (e.getKeyCode() == KeyEvent.VK_W)
@@ -76,9 +82,11 @@ public class TDVisualizerWindow extends JFrame {
 
   private final Panel panel;
 
+  // constructor
   public TDVisualizerWindow() {
     this.panel = new Panel(new RaySource());
 
+    // jframe stuff
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setUndecorated(true);
 

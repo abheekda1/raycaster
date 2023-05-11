@@ -43,32 +43,40 @@ public class Ray {
   // end accessors
 
   // mutators
+
+  // helper function to set start and fill in missing data
   public void setStart(Point2D start) {
     this.start.setLocation(start);
     setMagnitudeWithPoints();
     setAngleWithPoints();
   }
 
+  // helper function to set end and fill in missing data
   public void setEnd(Point2D end) {
     this.end.setLocation(end);
     setMagnitudeWithPoints();
     setAngleWithPoints();
   }
 
+  // sets the magnitude then fills in other data
   public void setMagnitude(double magnitude) {
     this.magnitude = magnitude;
     setPointsWithAngleAndMagnitude();
   }
 
+  // sets the angle and fills in missing data
   public void setAngle(double angle) {
     this.angle = angle;
     setPointsWithAngleAndMagnitude();
   }
 
+  // determines if it hit horizontally or vertically
   public void setHitX(boolean hitX) { this.hitX = hitX; }
   // end mutators
 
   // member functions
+
+  // math to fill in missing data based on one method or another
   public void setMagnitudeWithPoints() {
     this.magnitude = this.start.distance(end);
   }
@@ -87,6 +95,7 @@ public class Ray {
   // JFrame functions
   public void draw(Graphics g, Point2D origin, double direction) {
     g.setColor(Color.BLUE);
+    // draw a simple line to represent the ray/vector
     g.drawLine((int)(origin.getX() + start.getX()),
                (int)(origin.getY() + start.getY()),
                (int)(origin.getX() + Math.cos(direction + angle) * magnitude),

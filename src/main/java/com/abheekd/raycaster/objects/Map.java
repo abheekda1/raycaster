@@ -3,6 +3,7 @@ package com.abheekd.raycaster.objects;
 import java.awt.*;
 
 public class Map {
+  // just a wrapper around a two d array
   private final int[][] grid = {
       {1, 0, 0, 0, 1}, {1, 0, 0, 0, 1}, {1, 0, 1, 0, 1},
       {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1},
@@ -29,6 +30,7 @@ public class Map {
 
   public int getYStep() { return height / 5; }
 
+  // simply draw squares for every grid square
   public void draw(Graphics g, int w, int h) {
     g.setColor(Color.DARK_GRAY);
     for (int i = 0; i < 5 /* map size */; i++) {
